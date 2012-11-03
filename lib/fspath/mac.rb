@@ -8,18 +8,18 @@ class FSPath
       mac_finder_alias.delete
     end
 
-    FINDER_LABEL_COLORS = [:none, :orange, :red, :yellow, :blue, :purple, :green, :gray].freeze
-    FINDER_LABEL_COLOR_ALIASES = {:grey => :gray}.freeze
-    # Get finder label (one of :none, :orange, :red, :yellow, :blue, :purple, :green and :gray)
+    FINDER_LABEL_COLORS = [nil, :grey, :green, :purple, :blue, :yellow, :red, :orange].freeze
+    FINDER_LABEL_COLOR_ALIASES = {:gray => :grey}.freeze
+    # Get finder label (one of nil, :orange, :red, :yellow, :blue, :purple, :green and :grey)
     def finder_label
-      FINDER_LABEL_COLORS[mac_finder_alias.label_index.get]
+      FINDER_LABEL_COLORS[finder_label_number]
     end
     # Set finder label (:grey is same as :gray, nil or false as :none)
     def finder_label=(color)
-      color = FINDER_LABEL_COLOR_ALIASES[color] || color || :none
+      color = FINDER_LABEL_COLOR_ALIASES[color] || color
       index = FINDER_LABEL_COLORS.index(color)
       raise "Unknown label #{color.inspect}" unless index
-      mac_finder_alias.label_index.set(index)
+      self.finder_label_number = index
     end
 
     # Get spotlight comment
@@ -55,3 +55,5 @@ class FSPath
 
   include Mac
 end
+
+require 'fspath/mac/finder_label_number'
