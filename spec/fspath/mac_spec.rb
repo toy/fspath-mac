@@ -80,6 +80,16 @@ describe FSPath::Mac do
       end
 
       describe "number" do
+        def label_index_through_osascript(path)
+          applescript = <<-APPLESCRIPT
+            on run argv
+              tell application "Finder" to get label index of (POSIX file (item 1 of argv) as alias)
+            end run
+          APPLESCRIPT
+          arguments = [%w[osascript], applescript.lines.map{ |line| ['-e', line.strip] }, path.to_s].flatten
+          `#{arguments.shelljoin}`.to_i
+        end
+
         it "should set label" do
           @path = FSPath.temp_file_path
 
@@ -87,7 +97,7 @@ describe FSPath::Mac do
           8.times do |label_number|
             @path.send(:finder_label_number=, label_number)
             @path.send(:finder_label_number).should == label_number
-            color = mac_finder_alias_colors[@path.mac_finder_alias.label_index.get]
+            color = mac_finder_alias_colors[label_index_through_osascript(@path)]
             FSPath::Mac::FINDER_LABEL_COLORS.index(color).should == label_number
           end
         end
