@@ -17,8 +17,7 @@ class FSPath
 
     # Set finder label (:grey is same as :gray, nil or false as :none)
     def finder_label=(color)
-      color = FINDER_LABEL_COLOR_ALIASES[color] || color
-      index = FINDER_LABEL_COLORS.index(color)
+      index = FINDER_LABEL_COLORS.index(FINDER_LABEL_COLOR_ALIASES[color] || color)
       raise "Unknown label #{color.inspect}" unless index
       self.finder_label_number = index
     end
