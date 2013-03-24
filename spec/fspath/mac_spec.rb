@@ -4,12 +4,10 @@ require 'fspath/mac'
 describe FSPath::Mac do
   describe "mac related" do
     describe "move_to_trash" do
-      it "should call delete on mac_finder_alias" do
+      it "should call delete command using with_argv_tell_finder_to" do
         @path = FSPath('to_delete')
-        @finder_alias = mock(:finder_alias)
 
-        @path.should_receive(:mac_finder_alias).and_return(@finder_alias)
-        @finder_alias.should_receive(:delete)
+        @path.should_receive(:with_argv_tell_finder_to).with('move (POSIX file (item 1 of argv) as alias) to trash')
 
         @path.move_to_trash
       end
@@ -106,70 +104,42 @@ describe FSPath::Mac do
 
     describe "spotlight comments" do
       describe "getting" do
-        it "should call comment.get on mac_finder_alias" do
+        it "should call comment get using with_argv_tell_finder_to" do
           @path = FSPath(__FILE__)
-          @finder_alias = mock(:finder_alias)
-          @comment = mock(:comment)
-          @comment_text = mock(:comment_text)
 
-          @path.should_receive(:mac_finder_alias).and_return(@finder_alias)
-          @finder_alias.should_receive(:comment).and_return(@comment)
-          @comment.should_receive(:get).and_return(@comment_text)
+          @path.should_receive(:with_argv_tell_finder_to).with('get comment of (POSIX file (item 1 of argv) as alias)')
 
           @path.spotlight_comment.should == @comment_text
         end
       end
 
       describe "setting" do
-        it "should call comment.set on mac_finder_alias" do
+        it "should call comment set using with_argv_tell_finder_to" do
           @path = FSPath(__FILE__)
-          @finder_alias = mock(:finder_alias)
-          @comment = mock(:comment)
-          @comment_text = mock(:comment_text)
 
-          @path.should_receive(:mac_finder_alias).and_return(@finder_alias)
-          @finder_alias.should_receive(:comment).and_return(@comment)
-          @comment.should_receive(:set).with(@comment_text.to_s)
+          @path.should_receive(:with_argv_tell_finder_to).with('set comment of (POSIX file (item 1 of argv) as alias) to (item 2 of argv)', 'abc')
 
-          @path.spotlight_comment = @comment_text
-        end
-      end
-    end
-
-    describe "appscript objects" do
-      before do
-        @file_path = File.expand_path(__FILE__)
-      end
-
-      describe "mac_alias" do
-        it "should return instance of MacTypes::Alias" do
-          FSPath(@file_path).mac_alias.should be_kind_of(MacTypes::Alias)
-        end
-
-        it "should point to same path" do
-          FSPath(@file_path).mac_alias.path.should == @file_path
+          @path.spotlight_comment = 'abc'
         end
       end
 
-      describe "mac_file_url" do
-        it "should return instance of MacTypes::FileURL" do
-          FSPath(@file_path).mac_file_url.should be_kind_of(MacTypes::FileURL)
-        end
+      describe "getting" do
+        it "should call comment get using with_argv_tell_finder_to" do
+          @path = FSPath.temp_file_path
 
-        it "should point to same path" do
-          FSPath(@file_path).mac_file_url.path.should == @file_path
-        end
-      end
+          @path.spotlight_comment.should == ''
 
-      describe "mac_finder_alias" do
-        it "should return same ref" do
-          FSPath(@file_path).mac_finder_alias.should == Appscript.app('Finder').items[FSPath(@file_path).mac_alias]
-        end
-      end
+          @path.spotlight_comment = 'abc'
+          @path.spotlight_comment.should == 'abc'
 
-      describe "mac_finder_file_url" do
-        it "should return same ref" do
-          FSPath(@file_path).mac_finder_file_url.should == Appscript.app('Finder').items[FSPath(@file_path).mac_file_url]
+          @path.spotlight_comment = 1
+          @path.spotlight_comment.should == '1'
+
+          @path.spotlight_comment = "def\nghi"
+          @path.spotlight_comment.should == "def\nghi"
+
+          @path.spotlight_comment = nil
+          @path.spotlight_comment.should == ''
         end
       end
     end

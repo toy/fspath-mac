@@ -17,6 +17,5 @@ Gem::Specification.new do |s|
   s.require_paths = %w[lib]
 
   s.add_dependency 'fspath', '~> 2.0.0'
-  s.add_dependency 'rb-appscript'
   s.add_development_dependency 'rspec'
 end
