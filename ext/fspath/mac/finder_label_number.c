@@ -24,13 +24,13 @@ void raise_cf_error(CFErrorRef errorRef){
 
 	const char *errorDescriptionC = CFStringGetCStringPtr(errorDescriptionRef, kCFStringEncodingUTF8);
 	if (errorDescriptionC) {
-		rb_raise(rb_eRuntimeError, errorDescriptionC);
+		rb_raise(rb_eRuntimeError, "%s", errorDescriptionC);
 	} else {
 		CFIndex length = CFStringGetLength(errorDescriptionRef);
 		CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
 		char *errorDescription = (char *) malloc(maxSize);
 		CFStringGetCString(errorDescriptionRef, errorDescription, maxSize, kCFStringEncodingUTF8);
-		rb_raise(rb_eRuntimeError, errorDescription);
+		rb_raise(rb_eRuntimeError, "%s", errorDescription);
 	}
 }
 
