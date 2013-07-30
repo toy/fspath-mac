@@ -1,4 +1,7 @@
 language:
   - objective-c
   - ruby
+rvm:
+  - system
+  - default
 script: "bundle exec rspec"
