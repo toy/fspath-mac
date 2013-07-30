@@ -27,7 +27,7 @@ describe FSPath::Mac do
           @path = FSPath('to_label')
 
           FSPath::FINDER_LABEL_COLORS.each_with_index do |label, index|
-            @path.stub!(:finder_label_number).and_return(index)
+            @path.stub(:finder_label_number).and_return(index)
             @path.finder_label.should == label
           end
         end
