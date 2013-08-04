@@ -2,6 +2,8 @@
 
 Better than Pathname
 
+[![Build Status](https://travis-ci.org/toy/fspath-mac.png?branch=master)](https://travis-ci.org/toy/fspath-mac)
+
 ### OS X stuff
 
 Move to trash:
