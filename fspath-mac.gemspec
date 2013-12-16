@@ -16,6 +16,6 @@ Gem::Specification.new do |s|
   s.extensions    = `git ls-files -- ext/**/extconf.rb`.split("\n")
   s.require_paths = %w[lib]
 
-  s.add_dependency 'fspath', '~> 2.0.0'
+  s.add_dependency 'fspath', '~> 2.0'
   s.add_development_dependency 'rspec'
 end
