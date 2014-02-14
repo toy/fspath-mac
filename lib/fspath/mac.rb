@@ -1,4 +1,5 @@
 require 'fspath'
+require 'shellwords'
 
 class FSPath
   module Mac
