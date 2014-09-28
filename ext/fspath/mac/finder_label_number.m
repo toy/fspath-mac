@@ -1,4 +1,5 @@
 #include "ruby.h"
+#include <AppKit/AppKit.h>
 #include <CoreServices/CoreServices.h>
 
 CFStringRef get_path(VALUE self){
@@ -85,9 +86,32 @@ static VALUE finder_label_number_set(VALUE self, VALUE labelNumber){
 	return Qnil;
 }
 
+static VALUE move_to_trash(VALUE self){
+	CFStringRef pathRef = get_path(self);
+	NSString *path = (NSString *)pathRef;
+
+	NSString *dir = [path stringByDeletingLastPathComponent];
+	NSString *name = [path lastPathComponent];
+	NSArray *names = [NSArray arrayWithObject:name];
+	BOOL success = [[NSWorkspace sharedWorkspace]
+		performFileOperation:NSWorkspaceRecycleOperation
+		source:dir
+		destination:@""
+		files:names
+		tag:nil];
+	[names release];
+	[name release];
+	[dir release];
+
+	CFRelease(pathRef);
+
+	return success;
+}
+
 void Init_finder_label_number() {
 	VALUE cFSPath = rb_const_get(rb_cObject, rb_intern("FSPath"));
 	VALUE mMac = rb_const_get(cFSPath, rb_intern("Mac"));
 	rb_define_private_method(mMac, "finder_label_number", finder_label_number_get, 0);
 	rb_define_private_method(mMac, "finder_label_number=", finder_label_number_set, 1);
+	rb_define_method(mMac, "move_to_trash", move_to_trash, 0);
 }

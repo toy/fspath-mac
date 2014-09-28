@@ -1,1 +1,0 @@
-use NSFileManager#trashItemAtURL:resultingItemURL:error: for moving to trash

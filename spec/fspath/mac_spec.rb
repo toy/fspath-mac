@@ -10,7 +10,7 @@ describe FSPath::Mac do
         @link.unlink
         @link.make_link(@path)
 
-        @path.move_to_trash
+        @path.move_to_trash.should be_true
 
         @path.should_not exist
         @link.stat.nlink.should == 2

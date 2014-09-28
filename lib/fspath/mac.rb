@@ -3,11 +3,6 @@ require 'shellwords'
 
 class FSPath
   module Mac
-    # Move to trash using finder
-    def move_to_trash
-      with_argv_tell_finder_to 'move (POSIX file (item 1 of argv) as alias) to trash'
-    end
-
     FINDER_LABEL_COLORS = [nil, :grey, :green, :purple, :blue, :yellow, :red, :orange].freeze
     FINDER_LABEL_COLOR_ALIASES = {:gray => :grey}.freeze
 
