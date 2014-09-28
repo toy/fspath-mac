@@ -1,17 +1,23 @@
 #include "ruby.h"
 #include <CoreServices/CoreServices.h>
 
-CFURLRef url_for_path(VALUE fsPath){
-	VALUE path = rb_iv_get(fsPath, "@path");
+CFStringRef get_path(VALUE self){
+	VALUE path = rb_iv_get(self, "@path");
 	char *pathStr = StringValueCStr(path);
-
 	CFStringRef pathRef = CFStringCreateWithCString(NULL, pathStr, kCFStringEncodingUTF8);
+
 	if (!pathRef) {
 		rb_raise(rb_eRuntimeError, "Can't convert path");
 	}
 
+	return pathRef;
+}
+
+CFURLRef get_url(VALUE self){
+	CFStringRef pathRef = get_path(self);
 	CFURLRef urlRef = CFURLCreateWithFileSystemPath(NULL, pathRef, kCFURLPOSIXPathStyle, false);
 	CFRelease(pathRef);
+
 	if (!urlRef) {
 		rb_raise(rb_eRuntimeError, "Can't initialize url for path");
 	}
@@ -35,7 +41,7 @@ void raise_cf_error(CFErrorRef errorRef){
 }
 
 static VALUE finder_label_number_get(VALUE self){
-	CFURLRef urlRef = url_for_path(self);
+	CFURLRef urlRef = get_url(self);
 
 	CFErrorRef errorRef;
 	CFNumberRef labelNumberRef;
@@ -63,7 +69,7 @@ static VALUE finder_label_number_set(VALUE self, VALUE labelNumber){
 		rb_raise(rb_eArgError, "label number can be in range 0..7");
 	}
 
-	CFURLRef urlRef = url_for_path(self);
+	CFURLRef urlRef = get_url(self);
 
 	CFNumberRef labelNumberRef = CFNumberCreate(NULL, kCFNumberSInt32Type, &labelNumberValue);
 
