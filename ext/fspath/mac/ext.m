@@ -108,7 +108,7 @@ static VALUE move_to_trash(VALUE self){
 	return success;
 }
 
-void Init_finder_label_number() {
+void Init_ext() {
 	VALUE cFSPath = rb_const_get(rb_cObject, rb_intern("FSPath"));
 	VALUE mMac = rb_const_get(cFSPath, rb_intern("Mac"));
 	rb_define_private_method(mMac, "finder_label_number", finder_label_number_get, 0);

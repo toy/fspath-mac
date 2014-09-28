@@ -44,4 +44,4 @@ class FSPath
   include Mac
 end
 
-require 'fspath/mac/finder_label_number'
+require 'fspath/mac/ext'
