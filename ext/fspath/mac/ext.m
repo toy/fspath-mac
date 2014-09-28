@@ -105,7 +105,7 @@ static VALUE move_to_trash(VALUE self){
 
 	CFRelease(pathRef);
 
-	return success;
+	return success ? Qtrue : Qfalse;
 }
 
 void Init_ext() {
