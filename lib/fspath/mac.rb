@@ -3,6 +3,11 @@ require 'shellwords'
 
 class FSPath
   module Mac
+    # Move to trash
+    def move_to_trash
+      # actual implementation in extension
+    end
+
     FINDER_LABEL_COLORS = [nil, :grey, :green, :purple, :blue, :yellow, :red, :orange].freeze
     FINDER_LABEL_COLOR_ALIASES = {:gray => :grey}.freeze
 
