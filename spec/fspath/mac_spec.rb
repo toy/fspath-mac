@@ -10,7 +10,7 @@ describe FSPath::Mac do
         @link.unlink
         @link.make_link(@path)
 
-        expect(@path.move_to_trash).to be_truthy
+        expect(@path.move_to_trash).to be true
 
         expect(@path).not_to exist
         expect(@link.stat.nlink).to eq(2)
