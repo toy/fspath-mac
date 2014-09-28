@@ -4,12 +4,16 @@ require 'fspath/mac'
 describe FSPath::Mac do
   describe "mac related" do
     describe "move_to_trash" do
-      it "should call delete command using with_argv_tell_finder_to" do
-        @path = FSPath('to_delete')
-
-        @path.should_receive(:with_argv_tell_finder_to).with('move (POSIX file (item 1 of argv) as alias) to trash')
+      it "should remove file but not unlink it" do
+        @path = FSPath.temp_file_path
+        @link = FSPath.temp_file_path
+        @link.unlink
+        @link.make_link(@path)
 
         @path.move_to_trash
+
+        @path.should_not exist
+        @link.stat.nlink.should == 2
       end
     end
 
