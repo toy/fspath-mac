@@ -28,4 +28,4 @@ Set spotlight comment:
 
 ## Copyright
 
-Copyright (c) 2010-2014 Ivan Kuchin. See LICENSE.txt for details.
+Copyright (c) 2010-2016 Ivan Kuchin. See LICENSE.txt for details.
