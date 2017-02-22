@@ -1,8 +1,12 @@
-language:
-  - objective-c
-  - ruby
+os: osx
+language: ruby
 rvm:
-  - '1.9'
-  - '2.0'
-  - '2.1'
+  - default
+  - '2.3.3'
+  - '2.4.0'
 script: bundle exec rspec
+matrix:
+  include:
+    - env: CHECK_RUBIES=✓
+      rvm: '2'
+      script: bundle exec travis_check_rubies
