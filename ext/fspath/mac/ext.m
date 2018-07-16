@@ -28,17 +28,18 @@ CFURLRef get_url(VALUE self){
 
 void raise_cf_error(CFErrorRef errorRef){
 	CFStringRef errorDescriptionRef = CFErrorCopyDescription(errorRef);
+	CFRelease(errorRef);
 
-	const char *errorDescriptionC = CFStringGetCStringPtr(errorDescriptionRef, kCFStringEncodingUTF8);
-	if (errorDescriptionC) {
-		rb_raise(rb_eRuntimeError, "%s", errorDescriptionC);
-	} else {
-		CFIndex length = CFStringGetLength(errorDescriptionRef);
-		CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
-		char *errorDescription = (char *) malloc(maxSize);
-		CFStringGetCString(errorDescriptionRef, errorDescription, maxSize, kCFStringEncodingUTF8);
-		rb_raise(rb_eRuntimeError, "%s", errorDescription);
-	}
+	CFIndex length = CFStringGetLength(errorDescriptionRef);
+	CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
+	char *errorDescription = (char *) malloc(maxSize);
+	CFStringGetCString(errorDescriptionRef, errorDescription, maxSize, kCFStringEncodingUTF8);
+	CFRelease(errorDescriptionRef);
+
+	VALUE message = rb_str_new_cstr(errorDescription);
+	free(errorDescription);
+
+	rb_exc_raise(rb_exc_new3(rb_eRuntimeError, message));
 }
 
 static VALUE finder_label_number_get(VALUE self){
