@@ -25,24 +25,12 @@ class FSPath
 
     # Get spotlight comment
     def spotlight_comment
-      with_argv_tell_finder_to 'get comment of (POSIX file (item 1 of argv) as alias)'
+      # actual implementation in extension
     end
 
     # Set spotlight comment
     def spotlight_comment=(comment)
-      with_argv_tell_finder_to 'set comment of (POSIX file (item 1 of argv) as alias) to (item 2 of argv)', comment.to_s
-    end
-
-  private
-
-    def with_argv_tell_finder_to(command, *args)
-      applescript = <<-APPLESCRIPT
-        on run argv
-          tell application "Finder" to #{command}
-        end run
-      APPLESCRIPT
-      arguments = [%w[osascript], applescript.lines.map{ |line| ['-e', line.strip] }, expand_path.to_s, *args].flatten
-      `#{arguments.shelljoin}`.chomp("\n")
+      # actual implementation in extension
     end
   end
 

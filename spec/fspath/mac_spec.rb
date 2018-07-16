@@ -107,44 +107,22 @@ describe FSPath::Mac do
     end
 
     describe "spotlight comments" do
-      describe "getting" do
-        it "should call comment get using with_argv_tell_finder_to" do
-          @path = FSPath(__FILE__)
+      it "sets and retrieves spotlight comment" do
+        @path = FSPath.temp_file_path
 
-          expect(@path).to receive(:with_argv_tell_finder_to).with('get comment of (POSIX file (item 1 of argv) as alias)')
+        expect(@path.spotlight_comment).to eq('')
 
-          expect(@path.spotlight_comment).to eq(@comment_text)
-        end
-      end
+        @path.spotlight_comment = 'abc'
+        expect(@path.spotlight_comment).to eq('abc')
 
-      describe "setting" do
-        it "should call comment set using with_argv_tell_finder_to" do
-          @path = FSPath(__FILE__)
+        @path.spotlight_comment = 1
+        expect(@path.spotlight_comment).to eq('1')
 
-          expect(@path).to receive(:with_argv_tell_finder_to).with('set comment of (POSIX file (item 1 of argv) as alias) to (item 2 of argv)', 'abc')
+        @path.spotlight_comment = "def\nghi"
+        expect(@path.spotlight_comment).to eq("def\nghi")
 
-          @path.spotlight_comment = 'abc'
-        end
-      end
-
-      describe "getting" do
-        it "should call comment get using with_argv_tell_finder_to" do
-          @path = FSPath.temp_file_path
-
-          expect(@path.spotlight_comment).to eq('')
-
-          @path.spotlight_comment = 'abc'
-          expect(@path.spotlight_comment).to eq('abc')
-
-          @path.spotlight_comment = 1
-          expect(@path.spotlight_comment).to eq('1')
-
-          @path.spotlight_comment = "def\nghi"
-          expect(@path.spotlight_comment).to eq("def\nghi")
-
-          @path.spotlight_comment = nil
-          expect(@path.spotlight_comment).to eq('')
-        end
+        @path.spotlight_comment = nil
+        expect(@path.spotlight_comment).to eq('')
       end
     end
   end
