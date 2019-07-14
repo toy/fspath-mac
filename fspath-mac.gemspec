@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'fspath-mac'
-  s.version     = '3.2.0'
+  s.version     = '3.2.1'
   s.summary     = %q{FSPath methods for mac (move_to_trash, color labeling, spotlight comments, …)}
   s.homepage    = "http://github.com/toy/#{s.name}"
   s.authors     = ['Ivan Kuchin']
