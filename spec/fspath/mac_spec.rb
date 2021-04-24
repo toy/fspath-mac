@@ -82,7 +82,7 @@ describe FSPath::Mac do
     end
   end
 
-  describe '#spotlight_comment' do
+  describe '#spotlight_comment', skip: ENV['TRAVIS'] do
     let(:path){ FSPath.temp_file_path }
 
     it 'returns empty string when comment not set' do
@@ -116,7 +116,7 @@ describe FSPath::Mac do
     end
   end
 
-  describe '#spotlight_comment=' do
+  describe '#spotlight_comment=', skip: ENV['TRAVIS'] do
     let(:path){ FSPath.temp_file_path }
 
     def getfcomment(path)
