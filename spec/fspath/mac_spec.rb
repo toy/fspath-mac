@@ -83,7 +83,7 @@ describe FSPath::Mac do
     end
   end
 
-  describe '#spotlight_comment', skip: ENV['TRAVIS'] do
+  describe '#spotlight_comment' do
     let(:path){ FSPath.temp_file_path }
 
     def setfcomment(path, comment)
@@ -127,7 +127,7 @@ describe FSPath::Mac do
     end
   end
 
-  describe '#spotlight_comment=', skip: ENV['TRAVIS'] do
+  describe '#spotlight_comment=' do
     let(:path){ FSPath.temp_file_path }
 
     def getfcomment(path)

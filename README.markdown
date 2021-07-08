@@ -2,7 +2,7 @@
 
 Better than Pathname
 
-[![Build Status](https://travis-ci.org/toy/fspath-mac.png?branch=master)](https://travis-ci.org/toy/fspath-mac)
+[![Build Status](https://img.shields.io/github/workflow/status/toy/fspath-mac/check/master?logo=github)](https://github.com/toy/fspath-mac/actions/workflows/check.yml)
 
 ### OS X stuff
 
