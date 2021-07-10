@@ -2,6 +2,12 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'fspath/mac'
 
 describe FSPath::Mac do
+  def osascript_args(script)
+    ['osascript'] + script.split("\n").flat_map{ |line| ['-e', line.strip] }
+  end
+
+  FINDER_LABELS = [nil, :orange, :red, :yellow, :blue, :purple, :green, :grey]
+
   describe '#move_to_trash' do
     let(:path){ FSPath.temp_file_path }
     let(:link){ FSPath.temp_file_path }
@@ -21,15 +27,13 @@ describe FSPath::Mac do
     let(:path){ FSPath.temp_file_path }
 
     def set_label(path, label)
-      osxutils_label = case label
-      when :grey
-        'Gray'
-      when nil
-        'None'
-      else
-        "#{label[0].upcase}#{label[1..-1]}"
-      end
-      system *%W[setlabel -s #{osxutils_label} #{path}]
+      label_index = FINDER_LABELS.index(label)
+      script = <<-APPLESCRIPT
+        on run argv
+          tell application "Finder" to set label index of ((POSIX file (item 1 of argv)) as alias) to ((item 2 of argv) as integer)
+        end
+      APPLESCRIPT
+      system *osascript_args(script), path.to_s, label_index.to_s, out: '/dev/null'
     end
 
     FSPath::FINDER_LABEL_COLORS.each_with_index do |label, index|
@@ -45,16 +49,13 @@ describe FSPath::Mac do
     let(:path){ FSPath.temp_file_path }
 
     def get_label(path)
-      osxutils_label = IO.popen(%W[hfsdata -L #{path}], &:read).strip
-
-      case osxutils_label
-      when 'Gray'
-        :grey
-      when 'None'
-        nil
-      else
-        osxutils_label.downcase.to_sym
-      end
+      script = <<-APPLESCRIPT
+        on run argv
+          tell application "Finder" to return label index of ((POSIX file (item 1 of argv)) as alias)
+        end
+      APPLESCRIPT
+      label_index = IO.popen(osascript_args(script) + [path.to_s], &:read).to_i
+      FINDER_LABELS[label_index]
     end
 
     FSPath::FINDER_LABEL_COLORS.each_with_index do |label, index|
@@ -85,34 +86,44 @@ describe FSPath::Mac do
   describe '#spotlight_comment', skip: ENV['TRAVIS'] do
     let(:path){ FSPath.temp_file_path }
 
+    def setfcomment(path, comment)
+      script = <<-APPLESCRIPT
+        on run argv
+          tell application "Finder" to set comment of ((POSIX file (item 1 of argv)) as alias) to (item 2 of argv)
+        end
+      APPLESCRIPT
+      system *osascript_args(script), path.to_s, comment, out: '/dev/null'
+    end
+
     it 'returns empty string when comment not set' do
       expect(path.spotlight_comment).to eq('')
     end
 
     it 'returns string when set to string' do
-      string = 'abc'
-      system *%W[setfcomment -c #{string} #{path}]
+      comment = 'abc'
+      setfcomment(path, comment)
 
       sleep 0.1
 
-      expect(path.spotlight_comment).to eq(string)
+      expect(path.spotlight_comment).to eq(comment)
     end
 
     it 'preserves whitespace' do
-      string = " a \n\tb\t\nc\nd\r\nd\n\r"
-      system *%W[setfcomment -c #{string} #{path}]
+      comment = " a \n\tb\t\nc\nd\r\nd\n\r"
+      setfcomment(path, comment)
 
       sleep 0.1
 
-      expect(path.spotlight_comment).to eq(string)
+      expect(path.spotlight_comment).to eq(comment)
     end
 
     it 'removes comment when set to empty string' do
-      system *%W[setfcomment -c #{} #{path}]
+      comment = ''
+      setfcomment(path, comment)
 
       sleep 0.1
 
-      expect(path.spotlight_comment).to eq('')
+      expect(path.spotlight_comment).to eq(comment)
     end
   end
 
@@ -120,7 +131,12 @@ describe FSPath::Mac do
     let(:path){ FSPath.temp_file_path }
 
     def getfcomment(path)
-      IO.popen(['getfcomment', path.to_s], &:read)[0..-2]
+      script = <<-APPLESCRIPT
+        on run argv
+          tell application "Finder" to return comment of ((POSIX file (item 1 of argv)) as alias)
+        end
+      APPLESCRIPT
+      IO.popen(osascript_args(script) + [path.to_s], &:read)[0..-2]
     end
 
     it 'returns string when set to string' do
